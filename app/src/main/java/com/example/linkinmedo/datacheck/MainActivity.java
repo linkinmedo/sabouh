@@ -2,6 +2,7 @@ package com.example.linkinmedo.datacheck;
 
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -22,10 +23,15 @@ TextView view1,view2;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        final SharedPreferences examplePrefs = getSharedPreferences("pref",0);
+        final SharedPreferences.Editor editor = examplePrefs.edit();
+
         aSwitch = (Switch) findViewById(R.id.switch1);
         view1 = (TextView)findViewById(R.id.textView1);
         bSwitch = (Switch) findViewById(R.id.switch2);
         view2 = (TextView)findViewById(R.id.textView2);
+        aSwitch.setChecked(examplePrefs.getBoolean("A", false));
+        bSwitch.setChecked(examplePrefs.getBoolean("B", false));
 
         final PackageManager packageManager = getPackageManager();
         final ComponentName componentName = new ComponentName(getApplicationContext(),BootReceiver.class);
@@ -33,6 +39,8 @@ TextView view1,view2;
         bSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                editor.putBoolean("B", isChecked);
+                editor.commit();
             if (isChecked){
                  dataReceiver = new DataReceiver(getApplicationContext());
 
@@ -53,6 +61,8 @@ TextView view1,view2;
         aSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                editor.putBoolean("A", isChecked);
+                editor.commit();
                 if (isChecked){
                      cellReceiver = new CellReceiver(getApplicationContext());
 
