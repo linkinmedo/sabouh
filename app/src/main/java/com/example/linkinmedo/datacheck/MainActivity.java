@@ -8,19 +8,16 @@ import android.os.Bundle;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toast;
 
 
 public class MainActivity extends ActionBarActivity {
 Switch aSwitch,bSwitch;
 TextView view1,view2;
-   public static final DataReceiver dataReceiver = new DataReceiver();
-   public static final CellReceiver cellReceiver = new CellReceiver();
+     public static DataReceiver dataReceiver;
+     public static CellReceiver cellReceiver;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,12 +34,14 @@ TextView view1,view2;
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
             if (isChecked){
+                 dataReceiver = new DataReceiver(getApplicationContext());
 
                 telephonyManager.listen(dataReceiver,
                         PhoneStateListener.LISTEN_DATA_CONNECTION_STATE);
                 packageManager.setComponentEnabledSetting(componentName, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
 
             }else {
+                 dataReceiver = new DataReceiver(getApplicationContext());
                 packageManager.setComponentEnabledSetting(componentName,PackageManager.COMPONENT_ENABLED_STATE_DISABLED,PackageManager.DONT_KILL_APP);
                 telephonyManager.listen(dataReceiver,
                         PhoneStateListener.LISTEN_NONE);
@@ -55,12 +54,14 @@ TextView view1,view2;
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked){
+                     cellReceiver = new CellReceiver(getApplicationContext());
 
                     telephonyManager.listen(cellReceiver,
                             PhoneStateListener.LISTEN_SIGNAL_STRENGTHS);
                     packageManager.setComponentEnabledSetting(componentName, PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
 
                 }else {
+                     cellReceiver = new CellReceiver(getApplicationContext());
                     packageManager.setComponentEnabledSetting(componentName,PackageManager.COMPONENT_ENABLED_STATE_DISABLED,PackageManager.DONT_KILL_APP);
                     telephonyManager.listen(cellReceiver,
                             PhoneStateListener.LISTEN_NONE);
@@ -70,7 +71,9 @@ TextView view1,view2;
             }
         });
 
+
     }
+
 
 
 
@@ -82,18 +85,5 @@ TextView view1,view2;
         return true;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
 }
